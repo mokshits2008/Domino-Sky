@@ -11,4 +11,5 @@ tsconfig.tsbuildinfo
 *.log
 test-results/
 playwright-report/
+screenshots/
 coverage/

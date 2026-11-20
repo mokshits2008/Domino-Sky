@@ -12,7 +12,7 @@ export default defineConfig({
   workers: 1,
   reporter: 'list',
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:3002',
     trace: 'on-first-retry',
   },
   projects: [
@@ -26,8 +26,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run start',
-    port: 3000,
+    command: 'npx next start -p 3002',
+    port: 3002,
     reuseExistingServer: false,
     timeout: 60000,
   },

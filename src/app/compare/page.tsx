@@ -83,8 +83,10 @@ export default function ComparePage() {
 
             <div className="grid grid-cols-3 gap-2">
               <div className="space-y-1">
-                <label className="text-[10px] font-mono uppercase text-ink-muted">Airport</label>
+                <label htmlFor="scenario-a-airport" className="text-[10px] font-mono uppercase text-ink-muted">Airport</label>
                 <select
+                  id="scenario-a-airport"
+                  aria-label="Scenario A target airport"
                   value={airportA}
                   onChange={(e) => setAirportA(e.target.value)}
                   className="w-full h-8 px-2 bg-surface-alt border border-border rounded-input text-xs font-mono text-ink outline-none"
@@ -98,9 +100,11 @@ export default function ComparePage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-mono uppercase text-ink-muted">Window</label>
+                <label htmlFor="scenario-a-window" className="text-[10px] font-mono uppercase text-ink-muted">Window</label>
                 <div className="flex items-center space-x-1">
                   <select
+                    id="scenario-a-window"
+                    aria-label="Scenario A closure window"
                     value={`${startA}-${endA}`}
                     onChange={(e) => {
                       const [s, end] = e.target.value.split('-').map(Number);
@@ -118,8 +122,10 @@ export default function ComparePage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-mono uppercase text-ink-muted">Policy</label>
+                <label htmlFor="scenario-a-policy" className="text-[10px] font-mono uppercase text-ink-muted">Policy</label>
                 <select
+                  id="scenario-a-policy"
+                  aria-label="Scenario A arrival policy"
                   value={policyA}
                   onChange={(e) => setPolicyA(e.target.value as ArrivalPolicy)}
                   className="w-full h-8 px-2 bg-surface-alt border border-border rounded-input text-xs text-ink outline-none"
@@ -160,8 +166,10 @@ export default function ComparePage() {
 
             <div className="grid grid-cols-3 gap-2">
               <div className="space-y-1">
-                <label className="text-[10px] font-mono uppercase text-ink-muted">Airport</label>
+                <label htmlFor="scenario-b-airport" className="text-[10px] font-mono uppercase text-ink-muted">Airport</label>
                 <select
+                  id="scenario-b-airport"
+                  aria-label="Scenario B target airport"
                   value={airportB}
                   onChange={(e) => setAirportB(e.target.value)}
                   className="w-full h-8 px-2 bg-surface-alt border border-border rounded-input text-xs font-mono text-ink outline-none"
@@ -175,9 +183,11 @@ export default function ComparePage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-mono uppercase text-ink-muted">Window</label>
+                <label htmlFor="scenario-b-window" className="text-[10px] font-mono uppercase text-ink-muted">Window</label>
                 <div className="flex items-center space-x-1">
                   <select
+                    id="scenario-b-window"
+                    aria-label="Scenario B closure window"
                     value={`${startB}-${endB}`}
                     onChange={(e) => {
                       const [s, end] = e.target.value.split('-').map(Number);
@@ -195,8 +205,10 @@ export default function ComparePage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-mono uppercase text-ink-muted">Policy</label>
+                <label htmlFor="scenario-b-policy" className="text-[10px] font-mono uppercase text-ink-muted">Policy</label>
                 <select
+                  id="scenario-b-policy"
+                  aria-label="Scenario B arrival policy"
                   value={policyB}
                   onChange={(e) => setPolicyB(e.target.value as ArrivalPolicy)}
                   className="w-full h-8 px-2 bg-surface-alt border border-border rounded-input text-xs text-ink outline-none"
@@ -253,9 +265,8 @@ export default function ComparePage() {
             <div className="p-3 rounded-lg border border-border bg-surface-alt">
               <span className="text-[10px] font-mono uppercase text-ink-faint">Stranded Pax</span>
               <div
-                className={`font-mono text-xl font-bold mt-1 ${
-                  diff.metricsDiff.strandedPaxTotalDelta > 0 ? 'text-[#8C2F2A]' : 'text-ink'
-                }`}
+                className={`font-mono text-xl font-bold mt-1 ${diff.metricsDiff.strandedPaxTotalDelta > 0 ? 'text-[#8C2F2A]' : 'text-ink'
+                  }`}
               >
                 {diff.metricsDiff.strandedPaxTotalDelta >= 0 ? '+' : ''}
                 {diff.metricsDiff.strandedPaxTotalDelta}
@@ -292,52 +303,52 @@ export default function ComparePage() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead className="bg-surface-alt text-[10px] font-mono uppercase text-ink-muted border-b border-border">
-                <tr>
-                  <th className="py-2.5 px-3 font-semibold">Flight ID</th>
-                  <th className="py-2.5 px-3 font-semibold">Scenario A Actual Arr</th>
-                  <th className="py-2.5 px-3 font-semibold">Scenario B Actual Arr</th>
-                  <th className="py-2.5 px-3 font-semibold">Delay Delta (B - A)</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border font-sans">
-                {diff.flightDiffs.length === 0 ? (
+              <table aria-label="Diverging Flight Legs comparison table" className="w-full text-left text-xs border-collapse">
+                <thead className="bg-surface-alt text-[10px] font-mono uppercase text-ink-muted border-b border-border">
                   <tr>
-                    <td colSpan={4} className="py-8 text-center text-ink-faint text-xs">
-                      No flight-level timing differences between Scenario A and Scenario B.
-                    </td>
+                    <th scope="col" className="py-2.5 px-3 font-semibold">Flight ID</th>
+                    <th scope="col" className="py-2.5 px-3 font-semibold">Scenario A Actual Arr</th>
+                    <th scope="col" className="py-2.5 px-3 font-semibold">Scenario B Actual Arr</th>
+                    <th scope="col" className="py-2.5 px-3 font-semibold">Delay Delta (B - A)</th>
                   </tr>
-                ) : (
-                  diff.flightDiffs.map((fd) => (
-                    <tr key={fd.flightId} className="hover:bg-surface-alt/70 transition-colors">
-                      <td className="py-2.5 px-3 font-mono font-bold text-ink">
-                        {fd.flightId}
-                      </td>
-                      <td className="py-2.5 px-3 font-mono text-ink">
-                        {fd.actualArrA !== null ? formatTime(fd.actualArrA) : 'Cancelled'}
-                      </td>
-                      <td className="py-2.5 px-3 font-mono text-ink">
-                        {fd.actualArrB !== null ? formatTime(fd.actualArrB) : 'Cancelled'}
-                      </td>
-                      <td className="py-2.5 px-3 font-mono">
-                        <span
-                          className={
-                            fd.arrDelayDiff > 0
-                              ? 'text-[#8C2F2A] font-bold'
-                              : fd.arrDelayDiff < 0
-                              ? 'text-[#3F6B4E] font-bold'
-                              : 'text-ink'
-                          }
-                        >
-                          {formatDelay(fd.arrDelayDiff)}
-                        </span>
+                </thead>
+                <tbody className="divide-y divide-border font-sans">
+                  {diff.flightDiffs.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="py-8 text-center text-ink-faint text-xs">
+                        No flight-level timing differences between Scenario A and Scenario B.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    diff.flightDiffs.map((fd) => (
+                      <tr key={fd.flightId} className="hover:bg-surface-alt/70 transition-colors">
+                        <td className="py-2.5 px-3 font-mono font-bold text-ink">
+                          {fd.flightId}
+                        </td>
+                        <td className="py-2.5 px-3 font-mono text-ink">
+                          {fd.actualArrA !== null ? formatTime(fd.actualArrA) : 'Cancelled'}
+                        </td>
+                        <td className="py-2.5 px-3 font-mono text-ink">
+                          {fd.actualArrB !== null ? formatTime(fd.actualArrB) : 'Cancelled'}
+                        </td>
+                        <td className="py-2.5 px-3 font-mono">
+                          <span
+                            className={
+                              fd.arrDelayDiff > 0
+                                ? 'text-[#8C2F2A] font-bold'
+                                : fd.arrDelayDiff < 0
+                                  ? 'text-[#3F6B4E] font-bold'
+                                  : 'text-ink'
+                            }
+                          >
+                            {formatDelay(fd.arrDelayDiff)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
           </div>
         </div>
       </main>

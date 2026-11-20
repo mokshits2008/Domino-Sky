@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     }
     return errorResponse(
       'INTERNAL_SERVER_ERROR',
-      (err as Error).message || 'Unexpected recommendation error',
+      err instanceof Error ? err.message : 'Unexpected recommendation error',
       null,
       500
     );

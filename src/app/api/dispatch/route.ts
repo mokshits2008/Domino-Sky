@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     }
     return errorResponse(
       'INTERNAL_SERVER_ERROR',
-      (err as Error).message || 'Unexpected dispatch error',
+      err instanceof Error ? err.message : 'Unexpected dispatch error',
       null,
       500
     );

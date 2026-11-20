@@ -67,7 +67,7 @@ test.describe('Domino Sky Simulator E2E Test Suite (T1 - T8)', () => {
     await page.waitForLoadState('networkidle');
 
     // Switch to Connections tab
-    await page.getByRole('button', { name: /Connections/i }).click();
+    await page.getByRole('tab', { name: /Connections/i }).click();
 
     // Verify CX06, CX07, CX08 are marked as MISSED with stranded passengers
     await expect(page.getByText('CX06')).toBeVisible();
@@ -82,7 +82,7 @@ test.describe('Domino Sky Simulator E2E Test Suite (T1 - T8)', () => {
     await page.waitForLoadState('networkidle');
 
     // Switch to Crews tab
-    await page.getByRole('button', { name: /Crews/i }).click();
+    await page.getByRole('tab', { name: /Crews/i }).click();
 
     // Verify CR06 row has BREACH badge
     await expect(page.getByText('CR06')).toBeVisible();

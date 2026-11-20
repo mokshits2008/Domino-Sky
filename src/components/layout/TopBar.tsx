@@ -132,41 +132,41 @@ export function TopBar() {
         </Link>
 
         {/* Global Nav tabs */}
-        <nav className="flex items-center space-x-1 pl-4 border-l border-border">
-          <Link
-            href="/"
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-              pathname === '/'
-                ? 'bg-surface-alt text-ink font-semibold'
-                : 'text-ink-muted hover:text-ink hover:bg-surface-alt/50'
-            }`}
-          >
-            <Layers className="w-3.5 h-3.5" />
-            <span>Simulator</span>
-          </Link>
-          <Link
-            href="/fragility"
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-              pathname === '/fragility'
-                ? 'bg-surface-alt text-ink font-semibold'
-                : 'text-ink-muted hover:text-ink hover:bg-surface-alt/50'
-            }`}
-          >
-            <Activity className="w-3.5 h-3.5" />
-            <span>Fragility Heatmap</span>
-          </Link>
-          <Link
-            href="/compare"
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-              pathname === '/compare'
-                ? 'bg-surface-alt text-ink font-semibold'
-                : 'text-ink-muted hover:text-ink hover:bg-surface-alt/50'
-            }`}
-          >
-            <GitCompare className="w-3.5 h-3.5" />
-            <span>Compare</span>
-          </Link>
-        </nav>
+          <nav aria-label="Global navigation" className="flex items-center space-x-1 pl-4 border-l border-border">
+            <Link
+              href="/"
+              aria-current={pathname === '/' ? 'page' : undefined}
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${pathname === '/'
+                  ? 'bg-surface-alt text-ink font-semibold'
+                  : 'text-ink-muted hover:text-ink hover:bg-surface-alt/50'
+                }`}
+            >
+              <Layers className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Simulator</span>
+            </Link>
+            <Link
+              href="/fragility"
+              aria-current={pathname === '/fragility' ? 'page' : undefined}
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${pathname === '/fragility'
+                  ? 'bg-surface-alt text-ink font-semibold'
+                  : 'text-ink-muted hover:text-ink hover:bg-surface-alt/50'
+                }`}
+            >
+              <Activity className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Fragility Heatmap</span>
+            </Link>
+            <Link
+              href="/compare"
+              aria-current={pathname === '/compare' ? 'page' : undefined}
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${pathname === '/compare'
+                  ? 'bg-surface-alt text-ink font-semibold'
+                  : 'text-ink-muted hover:text-ink hover:bg-surface-alt/50'
+                }`}
+            >
+              <GitCompare className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Compare</span>
+            </Link>
+          </nav>
       </div>
 
       {/* Action Tools & Badges */}
@@ -175,80 +175,98 @@ export function TopBar() {
         <div
           className="hidden md:flex items-center space-x-1.5 bg-surface-alt border border-border px-2.5 py-1 rounded-full text-xs font-mono text-ink-muted"
           title={`Scenario Fingerprint Hash: ${fingerprint}`}
+          aria-label={`Scenario Fingerprint: ${fingerprint.slice(0, 8)}`}
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" aria-hidden="true"></span>
           <span>{fingerprint.slice(0, 8)}</span>
         </div>
 
         {/* Engine version */}
-        <div className="hidden lg:block text-[11px] font-mono text-ink-faint px-2 py-0.5 border border-border rounded bg-surface">
-          v{simulationResult.engineVersion}
-        </div>
+          <div
+            aria-label={`Engine version ${simulationResult.engineVersion}`}
+            className="hidden lg:block text-[11px] font-mono text-ink-faint px-2 py-0.5 border border-border rounded bg-surface"
+          >
+            v{simulationResult.engineVersion}
+          </div>
 
-        {/* Assumptions Modal Button */}
-        <button
-          onClick={() => setAssumptionsOpen(true)}
-          className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs text-ink-muted hover:text-ink hover:bg-surface-alt border border-border transition-colors relative"
-          title="View assumptions & data integrity report"
-        >
-          <span>Assumptions</span>
-          {warningsCount > 0 && (
-            <span className="flex items-center px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-800 text-[10px] font-mono font-medium">
-              <AlertTriangle className="w-2.5 h-2.5 mr-0.5" />
-              {warningsCount}
-            </span>
+          {/* Assumptions Modal Button */}
+          <button
+            onClick={() => setAssumptionsOpen(true)}
+            aria-label="View system assumptions and network warnings"
+            className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs text-ink-muted hover:text-ink hover:bg-surface-alt border border-border transition-colors relative"
+            title="View assumptions & data integrity report"
+          >
+            <span>Assumptions</span>
+            {warningsCount > 0 && (
+                <span
+                  aria-label={`${warningsCount} network warnings`}
+                  className="flex items-center px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-800 text-[10px] font-mono font-medium"
+                >
+                  <AlertTriangle className="w-2.5 h-2.5 mr-0.5" aria-hidden="true" />
+                  {warningsCount}
+                </span>
           )}
-        </button>
+              </button>
 
         {/* Export Dropdown */}
-        <div className="relative">
-          <button
-            onClick={() => setExportOpen(!exportOpen)}
-            className="flex items-center space-x-1 px-2.5 py-1 rounded-md text-xs text-ink-muted hover:text-ink hover:bg-surface-alt border border-border transition-colors"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>Export</span>
-            <ChevronDown className="w-3 h-3 ml-0.5 text-ink-faint" />
-          </button>
+            <div className="relative">
+              <button
+                onClick={() => setExportOpen(!exportOpen)}
+                aria-haspopup="menu"
+                aria-expanded={exportOpen}
+                aria-label="Export simulation data options"
+                className="flex items-center space-x-1 px-2.5 py-1 rounded-md text-xs text-ink-muted hover:text-ink hover:bg-surface-alt border border-border transition-colors"
+              >
+                <Download className="w-3.5 h-3.5" aria-hidden="true" />
+                <span>Export</span>
+                <ChevronDown className="w-3 h-3 ml-0.5 text-ink-faint" aria-hidden="true" />
+              </button>
 
-          {exportOpen && (
-            <div className="absolute right-0 mt-1 w-44 bg-surface border border-border rounded-lg shadow-card-elevated py-1 z-popover">
-              <button
-                onClick={exportJSON}
-                className="w-full text-left px-3 py-1.5 text-xs text-ink hover:bg-surface-alt flex items-center justify-between"
-              >
-                <span>Full Simulation (JSON)</span>
-                <span className="text-[10px] font-mono text-ink-faint">.json</span>
-              </button>
-              <button
-                onClick={exportCSV}
-                className="w-full text-left px-3 py-1.5 text-xs text-ink hover:bg-surface-alt flex items-center justify-between"
-              >
-                <span>Flight Results (CSV)</span>
-                <span className="text-[10px] font-mono text-ink-faint">.csv</span>
-              </button>
-            </div>
+              {exportOpen && (
+                  <div
+                    role="menu"
+                    aria-label="Export formats"
+                    className="absolute right-0 mt-1 w-44 bg-surface border border-border rounded-lg shadow-card-elevated py-1 z-popover"
+                  >
+                    <button
+                      role="menuitem"
+                      onClick={exportJSON}
+                      className="w-full text-left px-3 py-1.5 text-xs text-ink hover:bg-surface-alt flex items-center justify-between"
+                    >
+                      <span>Full Simulation (JSON)</span>
+                      <span className="text-[10px] font-mono text-ink-faint">.json</span>
+                    </button>
+                    <button
+                      role="menuitem"
+                      onClick={exportCSV}
+                      className="w-full text-left px-3 py-1.5 text-xs text-ink hover:bg-surface-alt flex items-center justify-between"
+                    >
+                      <span>Flight Results (CSV)</span>
+                      <span className="text-[10px] font-mono text-ink-faint">.csv</span>
+                    </button>
+                  </div>
           )}
-        </div>
+                </div>
 
         {/* Share Button */}
-        <button
-          onClick={handleShare}
-          className="flex items-center space-x-1.5 px-3 py-1 bg-primary text-white hover:bg-primary-hover rounded-md text-xs font-medium transition-colors shadow-sm"
-        >
-          {copied ? (
-            <>
-              <Check className="w-3.5 h-3.5 text-emerald-300" />
-              <span>Copied!</span>
-            </>
-          ) : (
-            <>
-              <Share2 className="w-3.5 h-3.5" />
-              <span>Share</span>
-            </>
-          )}
-        </button>
-      </div>
-    </header>
-  );
+              <button
+                onClick={handleShare}
+                aria-label="Share current scenario URL"
+                className="flex items-center space-x-1.5 px-3 py-1 bg-primary text-white hover:bg-primary-hover rounded-md text-xs font-medium transition-colors shadow-sm"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-300" aria-hidden="true" />
+                    <span>Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>Share</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </header>
+          );
 }

@@ -107,51 +107,56 @@ export function KpiGrid() {
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3 select-none min-w-0">
-      {kpis.map((kpi) => {
-        const Icon = kpi.icon;
-        return (
-          <div
-            key={kpi.id}
-            className={`p-3.5 rounded-card border ${kpi.accent} ${kpi.bg} shadow-card flex flex-col justify-between transition-all`}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-medium text-ink-muted tracking-tight truncate">
-                {kpi.title}
-              </span>
-              <Icon className="w-3.5 h-3.5 text-ink-faint flex-shrink-0" />
-            </div>
+      <div
+        role="region"
+        aria-label="Key Performance Indicators"
+        className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3 select-none min-w-0"
+      >
+        {kpis.map((kpi) => {
+          const Icon = kpi.icon;
+          return (
+            <div
+              key={kpi.id}
+              role="group"
+              aria-label={`${kpi.title}: ${kpi.value} ${kpi.subvalue}, ${kpi.deltaLabel}`}
+              className={`p-3.5 rounded-card border ${kpi.accent} ${kpi.bg} shadow-card flex flex-col justify-between transition-all`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-medium text-ink-muted tracking-tight truncate">
+                  {kpi.title}
+                </span>
+                <Icon className="w-3.5 h-3.5 text-ink-faint flex-shrink-0" aria-hidden="true" />
+              </div>
 
-            <div className="my-1.5 flex items-baseline space-x-1.5">
-              <span
-                className={`font-mono text-2xl font-bold tracking-tight ${
-                  kpi.textColor ?? 'text-ink'
-                }`}
-              >
-                {kpi.value}
-              </span>
-              <span className="font-mono text-xs text-ink-muted">
-                {kpi.subvalue}
-              </span>
-            </div>
+              <div className="my-1.5 flex items-baseline space-x-1.5">
+                <span
+                  className={`font-mono text-2xl font-bold tracking-tight ${kpi.textColor ?? 'text-ink'
+                    }`}
+                >
+                  {kpi.value}
+                </span>
+                <span className="font-mono text-xs text-ink-muted">
+                  {kpi.subvalue}
+                </span>
+              </div>
 
-            <div className="flex items-center space-x-1 text-[10px] font-mono">
-              {kpi.isBadTrend ? (
-                <TrendingUp className="w-3 h-3 text-[#8C2F2A]" />
-              ) : (
-                <TrendingDown className="w-3 h-3 text-[#3F6B4E]" />
-              )}
-              <span
-                className={
-                  kpi.isBadTrend ? 'text-[#8C2F2A]' : 'text-[#3F6B4E]'
-                }
-              >
-                {kpi.deltaLabel}
-              </span>
+              <div className="flex items-center space-x-1 text-[10px] font-mono">
+                {kpi.isBadTrend ? (
+                <TrendingUp className="w-3 h-3 text-[#8C2F2A]" aria-hidden="true" />
+                ) : (
+                <TrendingDown className="w-3 h-3 text-[#3F6B4E]" aria-hidden="true" />
+                )}
+                <span
+                  className={
+                    kpi.isBadTrend ? 'text-[#8C2F2A]' : 'text-[#3F6B4E]'
+                  }
+                >
+                  {kpi.deltaLabel}
+                </span>
+              </div>
             </div>
-          </div>
-        );
-      })}
-    </div>
-  );
+          );
+        })}
+      </div>
+      );
 }

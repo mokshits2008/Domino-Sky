@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     }
     return errorResponse(
       'INTERNAL_SERVER_ERROR',
-      (err as Error).message || 'Unexpected simulation error',
+      err instanceof Error ? err.message : 'Unexpected simulation error',
       null,
       500
     );

@@ -13,6 +13,7 @@ import { CrewsTable } from '@/components/simulator/CrewsTable';
 import { FlightDrawer } from '@/components/simulator/FlightDrawer';
 import { DispatcherModal } from '@/components/dispatcher/DispatcherModal';
 import { AssumptionsModal } from '@/components/modals/AssumptionsModal';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import {
   CalendarDays,
   MapPin,
@@ -49,59 +50,87 @@ export default function SimulatorPage() {
       <TopBar />
 
       {/* Main Grid: Left Rail (320px) | Center (minmax(0,1fr)) | Right Drawer (380px or 0) */}
-      <main className="flex-1 min-h-0 grid grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[320px_minmax(0,1fr)_auto] overflow-hidden">
-        {/* Left Rail: Disruption Builder */}
-        <DisruptionBuilder />
+        <main
+          role="main"
+          aria-label="Flight cascade simulator dashboard"
+          className="flex-1 min-h-0 grid grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[320px_minmax(0,1fr)_auto] overflow-hidden"
+        >
+          {/* Left Rail: Disruption Builder */}
+          <ErrorBoundary>
+            <DisruptionBuilder />
+          </ErrorBoundary>
 
-        {/* Center Panel */}
-        <section className="flex flex-col min-h-0 min-w-0 p-4 space-y-3.5 overflow-hidden">
-          {/* Top 6 KPI Cards */}
-          <div className="flex-shrink-0">
-            <KpiGrid />
-          </div>
+          {/* Center Panel */}
+            <section
+              role="region"
+              aria-label="Simulation results and visualization"
+              className="flex flex-col min-h-0 min-w-0 p-4 space-y-3.5 overflow-hidden"
+            >
+              {/* Top 6 KPI Cards */}
+                <div className="flex-shrink-0 min-w-0">
+                  <ErrorBoundary>
+                    <KpiGrid />
+                  </ErrorBoundary>
+                </div>
 
-          {/* Tab Navigation Toolbar */}
-          <div className="flex-shrink-0 flex items-center justify-between border-b border-border pb-2">
-            <div className="flex items-center space-x-1">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    data-testid={`tab-${tab.id}`}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center space-x-2 px-3 py-1.5 rounded-input text-xs font-medium transition-colors ${
-                      isActive
-                        ? 'bg-surface text-ink font-semibold shadow-card border border-border'
-                        : 'text-ink-muted hover:text-ink hover:bg-surface/50'
-                    }`}
-                  >
-                    <Icon className="w-3.5 h-3.5" />
-                    <span>{tab.label}</span>
-                  </button>
+                {/* Tab Navigation Toolbar */}
+                    <div
+                      role="tablist"
+                      aria-label="Simulator views"
+                      className="flex-shrink-0 flex items-center justify-between border-b border-border pb-2 overflow-x-auto min-w-0"
+                    >
+                      <div className="flex items-center space-x-1 flex-nowrap">
+                        {tabs.map((tab) => {
+                          const Icon = tab.icon;
+                          const isActive = activeTab === tab.id;
+                          return (
+                            <button
+                              key={tab.id}
+                              id={`tab-${tab.id}`}
+                              role="tab"
+                              aria-selected={isActive}
+                              aria-controls={`tabpanel-${tab.id}`}
+                              data-testid={`tab-${tab.id}`}
+                              onClick={() => setActiveTab(tab.id)}
+                              className={`flex items-center space-x-2 px-3 py-1.5 rounded-input text-xs font-medium transition-colors ${isActive
+                                  ? 'bg-surface text-ink font-semibold shadow-card border border-border'
+                                  : 'text-ink-muted hover:text-ink hover:bg-surface/50'
+                                }`}
+                            >
+                              <Icon className="w-3.5 h-3.5" aria-hidden="true" />
+                              <span>{tab.label}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Active Tab Content Area */}
+                      <div
+                        role="tabpanel"
+                        id={`tabpanel-${activeTab}`}
+                        aria-labelledby={`tab-${activeTab}`}
+                        className="flex-1 min-h-0 min-w-0 overflow-hidden"
+                      >
+                        <ErrorBoundary>
+                          {activeTab === 'gantt' && <GanttTimeline />}
+                          {activeTab === 'map' && <NetworkMap />}
+                          {activeTab === 'flights' && <FlightsTable />}
+                          {activeTab === 'connections' && <ConnectionsTable />}
+                          {activeTab === 'crews' && <CrewsTable />}
+                        </ErrorBoundary>
+                      </div>
+                    </section>
+
+                    {/* Right Collapsible Inspector Drawer */}
+                    <ErrorBoundary>
+                      <FlightDrawer />
+                    </ErrorBoundary>
+                  </main>
+
+                  {/* Dialog Modals */}
+                  <DispatcherModal />
+                  <AssumptionsModal />
+                </div>
                 );
-              })}
-            </div>
-          </div>
-
-          {/* Active Tab Content Area */}
-          <div className="flex-1 min-h-0 min-w-0 overflow-hidden">
-            {activeTab === 'gantt' && <GanttTimeline />}
-            {activeTab === 'map' && <NetworkMap />}
-            {activeTab === 'flights' && <FlightsTable />}
-            {activeTab === 'connections' && <ConnectionsTable />}
-            {activeTab === 'crews' && <CrewsTable />}
-          </div>
-        </section>
-
-        {/* Right Collapsible Inspector Drawer */}
-        <FlightDrawer />
-      </main>
-
-      {/* Dialog Modals */}
-      <DispatcherModal />
-      <AssumptionsModal />
-    </div>
-  );
 }

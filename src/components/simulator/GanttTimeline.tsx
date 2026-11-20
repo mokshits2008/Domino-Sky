@@ -163,9 +163,8 @@ export function GanttTimeline() {
                 <div
                   key={tailId}
                   style={{ height: `${dim.rowHeightPx}px` }}
-                  className={`flex items-center justify-between px-2 border-b border-border text-xs font-mono ${
-                    isSpare ? 'bg-spare/20 text-primary font-bold' : 'text-ink'
-                  }`}
+                  className={`flex items-center justify-between px-2 border-b border-border text-xs font-mono ${isSpare ? 'bg-spare/20 text-primary font-bold' : 'text-ink'
+                    }`}
                 >
                   <span className="truncate">{tailId}</span>
                   {isSpare && (
@@ -295,8 +294,17 @@ export function GanttTimeline() {
                     <g
                       key={`flight-g-${flight.flightId}`}
                       data-flight-id={flight.flightId}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Flight ${flight.flightId} from ${flight.origin} to ${flight.destination}, status ${flight.status}${flight.arrDelay > 0 ? `, delayed by ${flight.arrDelay} minutes` : ''}`}
                       onClick={() => setSelectedFlightId(flight.flightId)}
-                      className="cursor-pointer transition-opacity duration-150"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setSelectedFlightId(flight.flightId);
+                        }
+                      }}
+                      className="cursor-pointer transition-opacity duration-150 focus:outline-none focus:ring-2 focus:ring-primary"
                       opacity={isDimmed ? 0.28 : 1}
                     >
                       {/* Scheduled Ghost Outline (if delayed) */}
@@ -328,8 +336,8 @@ export function GanttTimeline() {
                           isSelected
                             ? '#2B2F3A'
                             : inCauseChain
-                            ? '#4F7494'
-                            : '#D5CEBF'
+                              ? '#4F7494'
+                              : '#D5CEBF'
                         }
                         strokeWidth={isSelected ? 2.5 : inCauseChain ? 2 : 1}
                       />

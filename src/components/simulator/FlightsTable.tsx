@@ -91,11 +91,10 @@ export function FlightsTable() {
             <button
               key={sev}
               onClick={() => setSeverityFilter(sev)}
-              className={`px-2.5 py-1 rounded-full text-[11px] font-mono border transition-colors ${
-                severityFilter === sev
+              className={`px-2.5 py-1 rounded-full text-[11px] font-mono border transition-colors ${severityFilter === sev
                   ? 'bg-ink text-surface border-ink font-semibold'
                   : 'bg-surface-alt text-ink-muted border-border hover:text-ink'
-              }`}
+                }`}
             >
               {sev === 'ALL' ? 'All (70)' : sev}
             </button>
@@ -105,120 +104,128 @@ export function FlightsTable() {
 
       {/* Table Body (Scrollable) */}
       <div className="flex-1 overflow-auto min-h-0">
-        <table className="w-full text-left text-xs border-collapse">
-          <thead className="sticky top-0 bg-surface-alt border-b border-border text-[11px] font-mono uppercase text-ink-muted select-none z-10">
-            <tr>
-              <th
-                onClick={() => toggleSort('flightId')}
-                className="py-2.5 px-3 font-semibold cursor-pointer hover:text-ink"
-              >
-                <div className="flex items-center space-x-1">
-                  <span>Flight</span>
-                  <ArrowUpDown className="w-3 h-3 text-ink-faint" />
-                </div>
-              </th>
-              <th className="py-2.5 px-3 font-semibold">Tail</th>
-              <th className="py-2.5 px-3 font-semibold">Route</th>
-              <th
-                onClick={() => toggleSort('schedDep')}
-                className="py-2.5 px-3 font-semibold cursor-pointer hover:text-ink"
-              >
-                <div className="flex items-center space-x-1">
-                  <span>Sched Dep - Arr</span>
-                  <ArrowUpDown className="w-3 h-3 text-ink-faint" />
-                </div>
-              </th>
-              <th className="py-2.5 px-3 font-semibold">Actual Dep - Arr</th>
-              <th
-                onClick={() => toggleSort('arrDelay')}
-                className="py-2.5 px-3 font-semibold cursor-pointer hover:text-ink"
-              >
-                <div className="flex items-center space-x-1">
-                  <span>Arr Delay</span>
-                  <ArrowUpDown className="w-3 h-3 text-ink-faint" />
-                </div>
-              </th>
-              <th className="py-2.5 px-3 font-semibold">Status</th>
-              <th className="py-2.5 px-3 font-semibold">Primary Cause</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border font-sans">
-            {filteredFlights.length === 0 ? (
+          <table aria-label="Flight schedule and disruption status" className="w-full text-left text-xs border-collapse">
+            <thead className="sticky top-0 bg-surface-alt border-b border-border text-[11px] font-mono uppercase text-ink-muted select-none z-10">
               <tr>
-                <td colSpan={8} className="py-8 text-center text-ink-faint text-xs">
-                  No flights matching filter criteria.
-                </td>
+                <th
+                  scope="col"
+                  role="button"
+                  aria-sort={sortField === 'flightId' ? (sortAsc ? 'ascending' : 'descending') : 'none'}
+                  onClick={() => toggleSort('flightId')}
+                  className="py-2.5 px-3 font-semibold cursor-pointer hover:text-ink"
+                >
+                  <div className="flex items-center space-x-1">
+                    <span>Flight</span>
+                    <ArrowUpDown className="w-3 h-3 text-ink-faint" aria-hidden="true" />
+                  </div>
+                </th>
+                <th scope="col" className="py-2.5 px-3 font-semibold">Tail</th>
+                <th scope="col" className="py-2.5 px-3 font-semibold">Route</th>
+                <th
+                  scope="col"
+                  role="button"
+                  aria-sort={sortField === 'schedDep' ? (sortAsc ? 'ascending' : 'descending') : 'none'}
+                  onClick={() => toggleSort('schedDep')}
+                  className="py-2.5 px-3 font-semibold cursor-pointer hover:text-ink"
+                >
+                  <div className="flex items-center space-x-1">
+                    <span>Sched Dep - Arr</span>
+                    <ArrowUpDown className="w-3 h-3 text-ink-faint" aria-hidden="true" />
+                  </div>
+                </th>
+                <th scope="col" className="py-2.5 px-3 font-semibold">Actual Dep - Arr</th>
+                <th
+                  scope="col"
+                  role="button"
+                  aria-sort={sortField === 'arrDelay' ? (sortAsc ? 'ascending' : 'descending') : 'none'}
+                  onClick={() => toggleSort('arrDelay')}
+                  className="py-2.5 px-3 font-semibold cursor-pointer hover:text-ink"
+                >
+                  <div className="flex items-center space-x-1">
+                    <span>Arr Delay</span>
+                    <ArrowUpDown className="w-3 h-3 text-ink-faint" aria-hidden="true" />
+                  </div>
+                </th>
+                <th scope="col" className="py-2.5 px-3 font-semibold">Status</th>
+                <th scope="col" className="py-2.5 px-3 font-semibold">Primary Cause</th>
               </tr>
-            ) : (
-              filteredFlights.map((flight) => {
-                const isSelected = flight.flightId === selectedFlightId;
-                return (
-                  <tr
-                    key={flight.flightId}
-                    onClick={() => setSelectedFlightId(flight.flightId)}
-                    className={`cursor-pointer transition-colors ${
-                      isSelected
-                        ? 'bg-primary-tint/50 font-medium'
-                        : 'hover:bg-surface-alt/70'
-                    }`}
-                  >
-                    <td className="py-2.5 px-3 font-mono font-bold text-ink">
-                      {flight.flightId}
-                    </td>
-                    <td className="py-2.5 px-3 font-mono text-ink-muted">
-                      {flight.tailId}
-                      {flight.tailId !== flight.originalTailId && (
-                        <span className="ml-1 text-[9px] px-1 py-0.2 bg-spare/40 text-primary rounded">
-                          SWAP
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-2.5 px-3 font-mono text-ink">
-                      {flight.origin} → {flight.destination}
-                    </td>
-                    <td className="py-2.5 px-3 font-mono text-ink-muted">
-                      {formatTime(flight.schedDep)} - {formatTime(flight.schedArr)}
-                    </td>
-                    <td className="py-2.5 px-3 font-mono text-ink">
-                      {flight.cancelled ? (
-                        <span className="text-ink-faint line-through">Cancelled</span>
-                      ) : (
-                        `${formatTime(flight.actualDep!)} - ${formatTime(flight.actualArr!)}`
-                      )}
-                    </td>
-                    <td className="py-2.5 px-3 font-mono">
-                      {flight.cancelled ? (
-                        <span className="text-ink-faint">—</span>
-                      ) : (
+            </thead>
+            <tbody className="divide-y divide-border font-sans">
+              {filteredFlights.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="py-8 text-center text-ink-faint text-xs">
+                    No flights matching filter criteria.
+                  </td>
+                </tr>
+              ) : (
+                filteredFlights.map((flight) => {
+                  const isSelected = flight.flightId === selectedFlightId;
+                  return (
+                    <tr
+                      key={flight.flightId}
+                      onClick={() => setSelectedFlightId(flight.flightId)}
+                      className={`cursor-pointer transition-colors ${isSelected
+                          ? 'bg-primary-tint/50 font-medium'
+                          : 'hover:bg-surface-alt/70'
+                        }`}
+                    >
+                      <td className="py-2.5 px-3 font-mono font-bold text-ink">
+                        {flight.flightId}
+                      </td>
+                      <td className="py-2.5 px-3 font-mono text-ink-muted">
+                        {flight.tailId}
+                        {flight.tailId !== flight.originalTailId && (
+                          <span className="ml-1 text-[9px] px-1 py-0.2 bg-spare/40 text-primary rounded">
+                            SWAP
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-2.5 px-3 font-mono text-ink">
+                        {flight.origin} → {flight.destination}
+                      </td>
+                      <td className="py-2.5 px-3 font-mono text-ink-muted">
+                        {formatTime(flight.schedDep)} - {formatTime(flight.schedArr)}
+                      </td>
+                      <td className="py-2.5 px-3 font-mono text-ink">
+                        {flight.cancelled ? (
+                          <span className="text-ink-faint line-through">Cancelled</span>
+                        ) : (
+                          `${formatTime(flight.actualDep!)} - ${formatTime(flight.actualArr!)}`
+                        )}
+                      </td>
+                      <td className="py-2.5 px-3 font-mono">
+                        {flight.cancelled ? (
+                          <span className="text-ink-faint">—</span>
+                        ) : (
+                          <span
+                            className={
+                              flight.arrDelay > 0
+                                ? 'font-bold text-[#8C2F2A]'
+                                : 'text-[#3F6B4E]'
+                            }
+                          >
+                            {formatDelay(flight.arrDelay)}
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-2.5 px-3">
                         <span
-                          className={
-                            flight.arrDelay > 0
-                              ? 'font-bold text-[#8C2F2A]'
-                              : 'text-[#3F6B4E]'
-                          }
+                          className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-mono border font-medium ${getSeverityBadgeClass(
+                            flight.severity
+                          )}`}
                         >
-                          {formatDelay(flight.arrDelay)}
+                          {flight.severity}
                         </span>
-                      )}
-                    </td>
-                    <td className="py-2.5 px-3">
-                      <span
-                        className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-mono border font-medium ${getSeverityBadgeClass(
-                          flight.severity
-                        )}`}
-                      >
-                        {flight.severity}
-                      </span>
-                    </td>
-                    <td className="py-2.5 px-3 text-ink-muted text-xs truncate max-w-xs" title={flight.explanation}>
-                      {getCauseLabel(flight.primaryCause?.type)}
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+                      </td>
+                      <td className="py-2.5 px-3 text-ink-muted text-xs truncate max-w-xs" title={flight.explanation}>
+                        {getCauseLabel(flight.primaryCause?.type)}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
       </div>
     </div>
   );

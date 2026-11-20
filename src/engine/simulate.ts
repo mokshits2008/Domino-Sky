@@ -15,7 +15,11 @@ import { evaluateCrews } from './crews';
 import { computeMetrics } from './metrics';
 import { hashScenario } from './fingerprint';
 
-let cachedBaselineStrandedPax: number | null = null;
+/**
+ * WeakMap cache for baseline stranded passenger counts keyed by network data instance.
+ * Preserves function purity, prevents memory leaks, and avoids global mutable state.
+ */
+const baselineStrandedPaxCache = new WeakMap<FlightNetworkData, number>();
 
 /**
  * Simulates a single disruption scenario against the flight network.
@@ -235,8 +239,8 @@ export function simulate(
       acTime === base && acTime > schedDep
         ? predecessorFlightResult
         : crTime === base && crTime > schedDep
-        ? predecessorCrewResult
-        : undefined;
+          ? predecessorCrewResult
+          : undefined;
 
     // 6. Determine causes, root cause, causeChain, explanation
     const causeRes = determineFlightCauses({
@@ -353,40 +357,42 @@ export function simulate(
   let baselineStrandedPax = 0;
   const isBaseline = scenario.closures.length === 0 && (!scenario.actions || scenario.actions.length === 0);
   if (!isBaseline) {
-    if (cachedBaselineStrandedPax === null) {
-      const baseline = simulateBaseline(network);
-      cachedBaselineStrandedPax = baseline.metrics.strandedPaxTotal;
+      let cached = baselineStrandedPaxCache.get(network);
+      if (cached === undefined) {
+        const baseline = simulateBaseline(network);
+        cached = baseline.metrics.strandedPaxTotal;
+        baselineStrandedPaxCache.set(network, cached);
+      }
+      baselineStrandedPax = cached;
     }
-    baselineStrandedPax = cachedBaselineStrandedPax;
+
+    // 10. Metrics calculation
+    const { metrics, perAirport, propagationEdges } = computeMetrics(
+      network,
+      orderedFlights,
+      connections,
+      crews,
+      baselineStrandedPax
+    );
+
+    const scenarioFingerprint = hashScenario(scenario);
+
+    return {
+      engineVersion: ENGINE_VERSION,
+      scenarioFingerprint,
+      flights: orderedFlights,
+      connections,
+      crews,
+      metrics,
+      perAirport,
+      propagationEdges,
+      warnings
+    };
   }
 
-  // 10. Metrics calculation
-  const { metrics, perAirport, propagationEdges } = computeMetrics(
-    network,
-    orderedFlights,
-    connections,
-    crews,
-    baselineStrandedPax
-  );
-
-  const scenarioFingerprint = hashScenario(scenario);
-
-  return {
-    engineVersion: ENGINE_VERSION,
-    scenarioFingerprint,
-    flights: orderedFlights,
-    connections,
-    crews,
-    metrics,
-    perAirport,
-    propagationEdges,
-    warnings
-  };
-}
-
-/**
- * Simulates the baseline scenario (no closures, no actions).
- */
-export function simulateBaseline(network: FlightNetworkData): SimulationResult {
-  return simulate(network, { closures: [], actions: [] });
-}
+  /**
+   * Simulates the baseline scenario (no closures, no actions).
+   */
+  export function simulateBaseline(network: FlightNetworkData): SimulationResult {
+    return simulate(network, { closures: [], actions: [] });
+  }

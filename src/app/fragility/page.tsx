@@ -158,211 +158,230 @@ export default function FragilityPage() {
           {/* Controls: Duration & Metric Selectors */}
           <div className="flex flex-wrap items-center gap-3 select-none">
             {/* Duration segmented control */}
-            <div className="flex items-center space-x-1 p-0.5 bg-surface border border-border rounded-input text-xs">
-              <span className="px-2 text-[10px] font-mono text-ink-faint">Duration:</span>
-              {[60, 90, 120].map((dur) => (
-                <button
-                  key={dur}
-                  onClick={() => setSelectedDuration(dur)}
-                  className={`px-2.5 py-1 rounded-[8px] font-mono transition-colors ${
-                    selectedDuration === dur
-                      ? 'bg-surface-alt text-ink font-bold shadow-sm'
-                      : 'text-ink-muted hover:text-ink'
-                  }`}
-                >
-                  {dur}m
-                </button>
-              ))}
-            </div>
-
-            {/* Metric selector */}
-            <div className="flex items-center space-x-1 p-0.5 bg-surface border border-border rounded-input text-xs">
-              {(['strandedPax', 'totalDelay', 'delayedFlights', 'breaches'] as const).map((m) => (
-                <button
-                  key={m}
-                  onClick={() => setSelectedMetric(m)}
-                  className={`px-3 py-1 rounded-[8px] transition-colors ${
-                    selectedMetric === m
-                      ? 'bg-surface-alt text-ink font-bold shadow-sm'
-                      : 'text-ink-muted hover:text-ink'
-                  }`}
-                >
-                  {m === 'strandedPax' ? 'Stranded Pax' : m === 'totalDelay' ? 'Total Delay' : m === 'delayedFlights' ? 'Delayed Flights' : 'Crew Breaches'}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Heatmap Grid Container */}
-        {loading ? (
-          <div className="h-96 flex flex-col items-center justify-center space-y-3 bg-surface rounded-card border border-border">
-            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-xs font-mono text-ink-muted">
-              Running full 1,488 scenario vulnerability sweep…
-            </span>
-          </div>
-        ) : (
-          <div className="rounded-card border border-border bg-surface shadow-card p-4 space-y-3 overflow-hidden">
-            <div className="flex items-center justify-between text-xs text-ink-muted">
-              <span className="font-semibold text-ink">
-                Airport vs Closure Window (Showing: {metricLabels[selectedMetric]})
-              </span>
-              <div className="flex items-center space-x-3 text-[11px]">
-                <span className="text-ink-faint">Impact:</span>
-                <div className="flex items-center space-x-1">
-                  <span className="w-3 h-3 rounded-sm bg-[#CFE3D4]"></span>
-                  <span>Low</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <span className="w-3 h-3 rounded-sm bg-[#F5E6B3]"></span>
-                  <span>Moderate</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <span className="w-3 h-3 rounded-sm bg-[#C9776B]"></span>
-                  <span>High (Clay)</span>
-                </div>
+              <div role="group" aria-label="Closure duration options" className="flex items-center space-x-1 p-0.5 bg-surface border border-border rounded-input text-xs">
+                <span className="px-2 text-[10px] font-mono text-ink-faint">Duration:</span>
+                {[60, 90, 120].map((dur) => (
+                  <button
+                    key={dur}
+                    type="button"
+                    aria-pressed={selectedDuration === dur}
+                    aria-label={`${dur} minutes duration`}
+                    onClick={() => setSelectedDuration(dur)}
+                    className={`px-2.5 py-1 rounded-[8px] font-mono transition-colors ${selectedDuration === dur
+                        ? 'bg-surface-alt text-ink font-bold shadow-sm'
+                        : 'text-ink-muted hover:text-ink'
+                      }`}
+                  >
+                    {dur}m
+                  </button>
+                ))}
               </div>
-            </div>
 
-            {/* Scrollable Matrix */}
-            <div className="overflow-x-auto pb-2">
-              <div className="min-w-[1000px]">
-                {/* Header row with time slots */}
-                <div className="grid grid-cols-[80px_repeat(31,minmax(28px,1fr))] gap-1 pb-1 border-b border-border text-[9px] font-mono text-ink-faint text-center select-none">
-                  <div className="text-left font-bold text-ink-muted pl-1">Airport</div>
-                  {timeSlots.map((ts, idx) => (
-                    <div key={ts.minute} className="truncate" title={ts.label}>
-                      {idx % 2 === 0 ? ts.label : '·'}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Rows for each airport */}
-                <div className="divide-y divide-border/60">
-                  {airports.map((airport) => (
-                    <div
-                      key={airport}
-                      className="grid grid-cols-[80px_repeat(31,minmax(28px,1fr))] gap-1 py-1 items-center"
+              {/* Metric selector */}
+                <div role="group" aria-label="Impact metric selection" className="flex items-center space-x-1 p-0.5 bg-surface border border-border rounded-input text-xs">
+                  {(['strandedPax', 'totalDelay', 'delayedFlights', 'breaches'] as const).map((m) => (
+                    <button
+                      key={m}
+                      type="button"
+                      aria-pressed={selectedMetric === m}
+                      aria-label={`View by ${m === 'strandedPax' ? 'Stranded Passengers' : m === 'totalDelay' ? 'Total Arrival Delay' : m === 'delayedFlights' ? 'Delayed Flights' : 'Crew Breaches'}`}
+                      onClick={() => setSelectedMetric(m)}
+                      className={`px-3 py-1 rounded-[8px] transition-colors ${selectedMetric === m
+                          ? 'bg-surface-alt text-ink font-bold shadow-sm'
+                          : 'text-ink-muted hover:text-ink'
+                        }`}
                     >
-                      <div className="font-mono font-bold text-xs text-ink pl-1">
-                        {airport}
-                      </div>
-
-                      {timeSlots.map((ts) => {
-                        const cell = cellsMap.get(`${airport}_${ts.minute}`);
-                        const val = cell ? cell[selectedMetric] : 0;
-                        const bg = getCellColor(val);
-                        const text = getCellTextColor(val);
-
-                        return (
-                          <div
-                            key={ts.minute}
-                            onClick={() => cell && handleCellClick(cell)}
-                            title={
-                              cell
-                                ? `${cell.airport} closed ${cell.startFormatted} to ${cell.endFormatted} (${cell.duration}m)\n• Stranded Pax: ${cell.strandedPax}\n• Total Delay: ${cell.totalDelay}m\n• Delayed Flights: ${cell.delayedFlights}\n• Breaches: ${cell.breaches}\n(Click to simulate)`
-                                : ''
-                            }
-                            style={{ backgroundColor: bg, color: text }}
-                            className="h-7 rounded flex items-center justify-center font-mono text-[10px] cursor-pointer hover:ring-2 hover:ring-primary transition-all select-none border border-black/5"
-                          >
-                            {val > 0 ? val : ''}
-                          </div>
-                        );
-                      })}
-                    </div>
+                      {m === 'strandedPax' ? 'Stranded Pax' : m === 'totalDelay' ? 'Total Delay' : m === 'delayedFlights' ? 'Delayed Flights' : 'Crew Breaches'}
+                    </button>
                   ))}
                 </div>
               </div>
             </div>
-          </div>
-        )}
 
-        {/* Top 10 Damaging Closures Table */}
-        {sweepResult && sweepResult.mostDamagingClosures && (
-          <div className="rounded-card border border-border bg-surface shadow-card overflow-hidden">
-            <div className="p-4 border-b border-border bg-surface-alt/40 flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Flame className="w-4 h-4 text-closure" />
-                <h2 className="font-bold text-xs text-ink uppercase font-mono tracking-wider">
-                  Top 10 Most Damaging Disruption Windows (Exhaustively Ranked)
-                </h2>
+            {/* Heatmap Grid Container */}
+            {loading ? (
+              <div className="h-96 flex flex-col items-center justify-center space-y-3 bg-surface rounded-card border border-border">
+                <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-xs font-mono text-ink-muted">
+                  Running full 1,488 scenario vulnerability sweep…
+                </span>
               </div>
-              <span className="text-[11px] font-mono text-ink-muted">
-                {sweepResult.totalScenariosEvaluated} scenarios evaluated in {sweepResult.elapsedMs}ms
-              </span>
-            </div>
+            ) : (
+              <div className="rounded-card border border-border bg-surface shadow-card p-4 space-y-3 overflow-hidden">
+                <div className="flex items-center justify-between text-xs text-ink-muted">
+                  <span className="font-semibold text-ink">
+                    Airport vs Closure Window (Showing: {metricLabels[selectedMetric]})
+                  </span>
+                  <div className="flex items-center space-x-3 text-[11px]">
+                    <span className="text-ink-faint">Impact:</span>
+                    <div className="flex items-center space-x-1">
+                      <span className="w-3 h-3 rounded-sm bg-[#CFE3D4]"></span>
+                      <span>Low</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <span className="w-3 h-3 rounded-sm bg-[#F5E6B3]"></span>
+                      <span>Moderate</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <span className="w-3 h-3 rounded-sm bg-[#C9776B]"></span>
+                      <span>High (Clay)</span>
+                    </div>
+                  </div>
+                </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead className="bg-surface-alt text-[10px] font-mono uppercase text-ink-muted border-b border-border">
-                  <tr>
-                    <th className="py-2.5 px-3 font-semibold">Rank</th>
-                    <th className="py-2.5 px-3 font-semibold">Airport</th>
-                    <th className="py-2.5 px-3 font-semibold">Closure Window</th>
-                    <th className="py-2.5 px-3 font-semibold">Duration</th>
-                    <th className="py-2.5 px-3 font-semibold">Damage Score</th>
-                    <th className="py-2.5 px-3 font-semibold">Stranded Pax</th>
-                    <th className="py-2.5 px-3 font-semibold">Total Delay</th>
-                    <th className="py-2.5 px-3 font-semibold">Breaches</th>
-                    <th className="py-2.5 px-3 font-semibold text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border font-sans">
-                  {sweepResult.mostDamagingClosures.slice(0, 10).map((rank) => (
-                    <tr key={rank.rank} className="hover:bg-surface-alt/70 transition-colors">
-                      <td className="py-2.5 px-3 font-mono font-bold text-ink">
-                        #{rank.rank}
-                      </td>
-                      <td className="py-2.5 px-3 font-mono font-bold text-closure">
-                        {rank.airport}
-                      </td>
-                      <td className="py-2.5 px-3 font-mono text-ink">
-                        {rank.startFormatted} to {rank.endFormatted}
-                      </td>
-                      <td className="py-2.5 px-3 font-mono text-ink-muted">
-                        {rank.duration}m
-                      </td>
-                      <td className="py-2.5 px-3 font-mono font-bold text-ink">
-                        {Math.round(rank.damageScore)}
-                      </td>
-                      <td className="py-2.5 px-3 font-mono">
-                        <span className="font-bold text-[#8C2F2A] px-1.5 py-0.5 bg-[#FAF0EE] rounded border border-closure/30">
-                          {rank.strandedPax} pax
-                        </span>
-                      </td>
-                      <td className="py-2.5 px-3 font-mono text-ink">
-                        {formatDelay(rank.totalDelay)}
-                      </td>
-                      <td className="py-2.5 px-3 font-mono">
-                        {rank.breaches > 0 ? (
-                          <span className="font-bold text-[#8C2F2A]">
-                            {rank.breaches} breaches
-                          </span>
-                        ) : (
-                          <span className="text-[#3F6B4E]">0</span>
-                        )}
-                      </td>
-                      <td className="py-2.5 px-3 text-right">
-                        <button
-                          onClick={() => {
-                            const p = `${rank.airport}:${rank.startFormatted}-${rank.endFormatted}`;
-                            router.push(`/?closures=${encodeURIComponent(p)}`);
-                          }}
-                          className="px-2.5 py-1 rounded-md text-xs font-mono font-semibold bg-primary text-white hover:bg-primary-hover transition-colors shadow-sm"
+                {/* Scrollable Matrix */}
+                <div className="overflow-x-auto pb-2">
+                  <div className="min-w-[1000px]">
+                    {/* Header row with time slots */}
+                    <div className="grid grid-cols-[80px_repeat(31,minmax(28px,1fr))] gap-1 pb-1 border-b border-border text-[9px] font-mono text-ink-faint text-center select-none">
+                      <div className="text-left font-bold text-ink-muted pl-1">Airport</div>
+                      {timeSlots.map((ts, idx) => (
+                        <div key={ts.minute} className="truncate" title={ts.label}>
+                          {idx % 2 === 0 ? ts.label : '·'}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Rows for each airport */}
+                    <div className="divide-y divide-border/60">
+                      {airports.map((airport) => (
+                        <div
+                          key={airport}
+                          className="grid grid-cols-[80px_repeat(31,minmax(28px,1fr))] gap-1 py-1 items-center"
                         >
-                          Simulate
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-      </main>
-    </div>
-  );
+                          <div className="font-mono font-bold text-xs text-ink pl-1">
+                            {airport}
+                          </div>
+
+                          {timeSlots.map((ts) => {
+                            const cell = cellsMap.get(`${airport}_${ts.minute}`);
+                            const val = cell ? cell[selectedMetric] : 0;
+                            const bg = getCellColor(val);
+                            const text = getCellTextColor(val);
+
+                            return (
+                              <div
+                                key={ts.minute}
+                                role="button"
+                                tabIndex={0}
+                                aria-label={
+                                  cell
+                                    ? `${cell.airport} closed from ${cell.startFormatted} to ${cell.endFormatted}: ${val} ${selectedMetric}`
+                                    : `${airport} at ${ts.label}: normal`
+                                }
+                                onClick={() => cell && handleCellClick(cell)}
+                                onKeyDown={(e) => {
+                                  if ((e.key === 'Enter' || e.key === ' ') && cell) {
+                                    e.preventDefault();
+                                    handleCellClick(cell);
+                                  }
+                                }}
+                                title={
+                                  cell
+                                    ? `${cell.airport} closed ${cell.startFormatted} to ${cell.endFormatted} (${cell.duration}m)\n• Stranded Pax: ${cell.strandedPax}\n• Total Delay: ${cell.totalDelay}m\n• Delayed Flights: ${cell.delayedFlights}\n• Breaches: ${cell.breaches}\n(Click to simulate)`
+                                    : ''
+                                }
+                                style={{ backgroundColor: bg, color: text }}
+                                className="h-7 rounded flex items-center justify-center font-mono text-[10px] cursor-pointer hover:ring-2 hover:ring-primary focus:outline-none focus:ring-2 focus:ring-primary transition-all select-none border border-black/5"
+                              >
+                                {val > 0 ? val : ''}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Top 10 Damaging Closures Table */}
+            {sweepResult && sweepResult.mostDamagingClosures && (
+              <div className="rounded-card border border-border bg-surface shadow-card overflow-hidden">
+                <div className="p-4 border-b border-border bg-surface-alt/40 flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Flame className="w-4 h-4 text-closure" />
+                    <h2 className="font-bold text-xs text-ink uppercase font-mono tracking-wider">
+                      Top 10 Most Damaging Disruption Windows (Exhaustively Ranked)
+                    </h2>
+                  </div>
+                  <span className="text-[11px] font-mono text-ink-muted">
+                    {sweepResult.totalScenariosEvaluated} scenarios evaluated in {sweepResult.elapsedMs}ms
+                  </span>
+                </div>
+
+                <div className="overflow-x-auto">
+                    <table aria-label="Top 10 Most Damaging Disruption Windows table" className="w-full text-left text-xs border-collapse">
+                      <thead className="bg-surface-alt text-[10px] font-mono uppercase text-ink-muted border-b border-border">
+                        <tr>
+                          <th scope="col" className="py-2.5 px-3 font-semibold">Rank</th>
+                          <th scope="col" className="py-2.5 px-3 font-semibold">Airport</th>
+                          <th scope="col" className="py-2.5 px-3 font-semibold">Closure Window</th>
+                          <th scope="col" className="py-2.5 px-3 font-semibold">Duration</th>
+                          <th scope="col" className="py-2.5 px-3 font-semibold">Damage Score</th>
+                          <th scope="col" className="py-2.5 px-3 font-semibold">Stranded Pax</th>
+                          <th scope="col" className="py-2.5 px-3 font-semibold">Total Delay</th>
+                          <th scope="col" className="py-2.5 px-3 font-semibold">Breaches</th>
+                          <th scope="col" className="py-2.5 px-3 font-semibold text-right">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border font-sans">
+                        {sweepResult.mostDamagingClosures.slice(0, 10).map((rank) => (
+                          <tr key={rank.rank} className="hover:bg-surface-alt/70 transition-colors">
+                            <td className="py-2.5 px-3 font-mono font-bold text-ink">
+                              #{rank.rank}
+                            </td>
+                            <td className="py-2.5 px-3 font-mono font-bold text-closure">
+                              {rank.airport}
+                            </td>
+                            <td className="py-2.5 px-3 font-mono text-ink">
+                              {rank.startFormatted} to {rank.endFormatted}
+                            </td>
+                            <td className="py-2.5 px-3 font-mono text-ink-muted">
+                              {rank.duration}m
+                            </td>
+                            <td className="py-2.5 px-3 font-mono font-bold text-ink">
+                              {Math.round(rank.damageScore)}
+                            </td>
+                            <td className="py-2.5 px-3 font-mono">
+                              <span className="font-bold text-[#8C2F2A] px-1.5 py-0.5 bg-[#FAF0EE] rounded border border-closure/30">
+                                {rank.strandedPax} pax
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-3 font-mono text-ink">
+                              {formatDelay(rank.totalDelay)}
+                            </td>
+                            <td className="py-2.5 px-3 font-mono">
+                              {rank.breaches > 0 ? (
+                                <span className="font-bold text-[#8C2F2A]">
+                                  {rank.breaches} breaches
+                                </span>
+                              ) : (
+                                <span className="text-[#3F6B4E]">0</span>
+                              )}
+                            </td>
+                            <td className="py-2.5 px-3 text-right">
+                              <button
+                                type="button"
+                                aria-label={`Simulate disruption at ${rank.airport} from ${rank.startFormatted} to ${rank.endFormatted}`}
+                                onClick={() => {
+                                  const p = `${rank.airport}:${rank.startFormatted}-${rank.endFormatted}`;
+                                  router.push(`/?closures=${encodeURIComponent(p)}`);
+                                }}
+                                className="px-2.5 py-1 rounded-md text-xs font-mono font-semibold bg-primary text-white hover:bg-primary-hover transition-colors shadow-sm"
+                              >
+                                Simulate
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                </div>
+              </div>
+            )}
+          </main>
+        </div>
+        );
 }
